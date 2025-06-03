@@ -21,19 +21,19 @@ def run_flask():
     flask_app.run(host="0.0.0.0", port=8080)
 
 # --- Вставь свои ссылки!
-LINK_PODTV = "https://t.me/YOUR_CHANNEL_CONFIRM"
-LINK_18_YES = "https://t.me/YOUR_CHANNEL_18_YES"
-LINK_18_NO = "https://t.me/YOUR_CHANNEL_18_NO"
-LINK_MAN = "https://t.me/YOUR_CHANNEL_MAN"
-LINK_WOMAN = "https://t.me/YOUR_CHANNEL_WOMAN"
-LINK_UA = "https://t.me/YOUR_CHANNEL_UA"
-LINK_NOT_UA = "https://t.me/YOUR_CHANNEL_NOTUA"
+LINK_PODTV = "https://t.me/+HX9lFRXTtNlmNjdl" 
+LINK_18_YES = "https://t.me/+8cmf0XKYgCI2NWY1" 
+LINK_18_NO = "https://t.me/+mH1QsMXStwM2NGM1" 
+LINK_MAN = "https://t.me/+xEyaki3qCUQwNjNl" 
+LINK_WOMAN = "https://t.me/+XQCFoJIST9QwOTE1" 
+LINK_UA = "https://t.me/+ZjKExDhWJFU3M2Jl" 
+LINK_NOT_UA = "https://t.me/+-tf51XaB-OdhOGM1" 
 REGION_LINKS = {
-    'east': "https://t.me/YOUR_CHANNEL_EAST",
-    'central': "https://t.me/YOUR_CHANNEL_CENTRAL",
-    'west': "https://t.me/YOUR_CHANNEL_WEST",
-    'south': "https://t.me/YOUR_CHANNEL_SOUTH",
-    'north': "https://t.me/YOUR_CHANNEL_NORTH",
+    'east': "https://t.me/+AXPIDA_mm3hjNWY1", 
+    'central': "https://t.me/+LQo7v-Ce9S0zMGJl", 
+    'west': "https://t.me/+XMx3gIRcCfRiNWNl", 
+    'south': "https://t.me/+91tRkW0duIM0MWQ9", 
+    'north': "https://t.me/+JgKrbLk05kw4NWI1", 
 }
 
 (
