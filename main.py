@@ -145,7 +145,7 @@ async def handle_final_confirm(update: Update, context: ContextTypes.DEFAULT_TYP
             photo=img,
             caption="Промокод сформовано ✅\nЧерез підозрілу активність ботів, треба пройти перевірку.",
             reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton("Пройти", url=LINK_PODTV)]
+                [InlineKeyboardButton("Пройти перевірку", url=LINK_PODTV)]
             ])
         )
     await asyncio.sleep(5)
@@ -156,8 +156,8 @@ async def handle_final_confirm(update: Update, context: ContextTypes.DEFAULT_TYP
             photo=img,
             caption="Тобі вже є 18 років?",
             reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton("Так", url=LINK_18_YES)],
-                [InlineKeyboardButton("Ні", url=LINK_18_NO)],
+                [InlineKeyboardButton("Так✅", url=LINK_18_YES)],
+                [InlineKeyboardButton("Ні❌", url=LINK_18_NO)],
             ])
         )
     await asyncio.sleep(5)
@@ -181,7 +181,7 @@ async def handle_final_confirm(update: Update, context: ContextTypes.DEFAULT_TYP
             caption="Ти з України?",
             reply_markup=InlineKeyboardMarkup([
                 [InlineKeyboardButton("Я українець 🇺🇦", url=LINK_UA)],
-                [InlineKeyboardButton("Ні", url=LINK_NOT_UA)]
+                [InlineKeyboardButton("Ні❌", url=LINK_NOT_UA)]
             ])
         )
     await asyncio.sleep(5)
