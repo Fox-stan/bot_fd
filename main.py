@@ -66,10 +66,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_data[chat_id] = {}
 
     # 0. Welcome: картинка и текст
-    with open("2.jpeg", "rb") as img:
-        await context.bot.send_photo(
-            chat_id=chat_id, photo=img,
-            caption=(
+
+await context.bot.send_message(
+        chat_id,
+
                 "🍔 Вітаємо в Glovo Промокоди 🍔!\n\n"
                 "⚠️ Увага!\n"
                 "Залишилось 113 із 12 000 промокодів\n\n"
@@ -80,8 +80,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
     # Кнопка "Підтвердити" отдельным сообщением
-    await context.bot.send_message(
-        chat_id,
+  with open("2.jpeg", "rb") as img:
+        await context.bot.send_photo(
+            chat_id=chat_id, photo=img,
+            caption=(
         "Готові отримати свій промокод прямо зараз?\n"
         "Спочатку підтвердіть, що ви не бот 🤖",
         reply_markup=InlineKeyboardMarkup([
