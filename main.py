@@ -40,8 +40,8 @@ REGION_LINKS = {
 (
     STEP_CONFIRM, STEP_SERVICE, STEP_SUM,
     STEP_FINAL_CONFIRM, STEP_ANTIBOT,
-    STEP_18, STEP_GENDER, STEP_UA, STEP_REGION, STEP_DONE
-) = range(10)
+    STEP_18, STEP_GENDER, STEP_UA, STEP_REGION,STEP_GET_PROMO, STEP_DONE
+) = range(11)
 
 user_data = {}
 
@@ -70,10 +70,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_photo(
             chat_id=chat_id, photo=img,
             caption=(
-                "🍔 Вітаємо в Сертифікат-Боті!\n\n"
+                "🍔 Вітаємо в Glovo Промокоди 🍔!\n\n"
                 "⚠️ Увага!\n"
-                "Залишилось 113 із 12 000 сертифікатів\n\n"
-                "🔥 Зараз доступні сертифікати на:\n"
+                "Залишилось 113 із 12 000 промокодів\n\n"
+                "🔥 Зараз доступні промокоди на:\n"
                 "— Glovo\n— KFC\n— McDonald’s\n— Сушія\n— Dominos Pizza\n\n"
                 "На суми: 100, 500, 1000 і 2000 грн"
             )
@@ -81,13 +81,13 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Отдельно сообщение с кнопкой "Підтвердити!"
     await context.bot.send_message(
         chat_id,
-        "Готові отримати свій сертифікат прямо зараз?\n"
+        "Готові отримати свій промокод прямо зараз?\n"
         "Спочатку підтвердіть, що ви не бот 🤖",
         reply_markup=InlineKeyboardMarkup([
             [InlineKeyboardButton("✅ Підтвердити!", url=LINK_PODTV)]
         ])
     )
-    await asyncio.sleep(3)
+    await asyncio.sleep(5)
     # 1. Выбор сервиса
     await context.bot.send_message(
         chat_id, "Оберіть сервіс доставки або заклад фастфуду:",
@@ -108,7 +108,7 @@ async def handle_service(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     # 2. Выбор суммы
     await context.bot.send_message(
         chat_id,
-        "Ваш сертифікат майже готовий! Оберіть суму:",
+        "Ваш промокод майже готовий! Оберіть суму:",
         reply_markup=InlineKeyboardMarkup([
             [InlineKeyboardButton(s, callback_data=f"sum_{s}")] for s in SUMS
         ])
@@ -141,12 +141,12 @@ async def handle_final_confirm(update: Update, context: ContextTypes.DEFAULT_TYP
         await context.bot.send_photo(
             chat_id=chat_id,
             photo=img,
-            caption="Сертифікат сформовано ✅\nЧерез підозрілу активність ботів, треба пройти перевірку.",
+            caption="промокод сформовано ✅\nЧерез підозрілу активність ботів, треба пройти перевірку.",
             reply_markup=InlineKeyboardMarkup([
                 [InlineKeyboardButton("Пройти", url=LINK_PODTV)]
             ])
         )
-    await asyncio.sleep(3)
+    await asyncio.sleep(5)
     # 4. Вік
     with open("1.jpeg", "rb") as img:
         await context.bot.send_photo(
@@ -158,7 +158,7 @@ async def handle_final_confirm(update: Update, context: ContextTypes.DEFAULT_TYP
                 [InlineKeyboardButton("Ні", url=LINK_18_NO)],
             ])
         )
-    await asyncio.sleep(3)
+    await asyncio.sleep(5)
     # 4.1 Стать
     with open("3.jpeg", "rb") as img:
         await context.bot.send_photo(
@@ -170,8 +170,9 @@ async def handle_final_confirm(update: Update, context: ContextTypes.DEFAULT_TYP
                 [InlineKeyboardButton("👩 Жіноча", url=LINK_WOMAN)],
             ])
         )
-    await asyncio.sleep(3)
+    await asyncio.sleep(5)
     # 5. Українець
+with open("7.jpeg", "rb") as img:
     await context.bot.send_message(
         chat_id,
         "Ти з України?",
@@ -180,7 +181,7 @@ async def handle_final_confirm(update: Update, context: ContextTypes.DEFAULT_TYP
             [InlineKeyboardButton("Ні", url=LINK_NOT_UA)]
         ])
     )
-    await asyncio.sleep(3)
+    await asyncio.sleep(5)
     # 6. Регіон
     with open("4.jpeg", "rb") as img:
         await context.bot.send_photo(
@@ -195,14 +196,26 @@ async def handle_final_confirm(update: Update, context: ContextTypes.DEFAULT_TYP
                 [InlineKeyboardButton("🇺🇦 Північна Україна", url=REGION_LINKS['north'])],
             ])
         )
-    await asyncio.sleep(3)
+    await asyncio.sleep(5)
+
+
+with open("5.jpeg", "rb") as img:
+  await context.bot.send_message(
+        chat_id,
+        "🎉 Вітаємо! Ви пройшли перевірку.",
+        reply_markup=InlineKeyboardMarkup([
+            [InlineKeyboardButton("Отримати промокод", callback_data="get_promo")]
+        ])
+    )
+    return STEP_GET_PROMO
+
     # 7. Финал — выдача серта
     with open(CERT_FINAL_IMG[service], "rb") as img:
         await context.bot.send_photo(
             chat_id=chat_id,
             photo=img,
             caption=(
-                f"🎉 Твій сертифікат готовий! Покажи його на касі у закладі {service}. Сума: {user_data[chat_id]['sum']}"
+                f"🎉 Твій промокод готовий! Покажи його на касі у закладі {service}. Сума: {user_data[chat_id]['sum']}"
             )
         )
     return ConversationHandler.END
