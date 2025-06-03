@@ -2,11 +2,11 @@ import os
 import threading
 import asyncio
 from telegram import (
-    Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove
+    Update, InlineKeyboardButton, InlineKeyboardMarkup
 )
 from telegram.ext import (
     ApplicationBuilder, CommandHandler, ContextTypes,
-    ConversationHandler, MessageHandler, filters, CallbackQueryHandler
+    ConversationHandler, CallbackQueryHandler
 )
 from flask import Flask
 
@@ -20,7 +20,7 @@ def home():
 def run_flask():
     flask_app.run(host="0.0.0.0", port=8080)
 
-# --- Ссылки (ВСТАВЬ СВОИ!!!)
+# --- Вставь свои ссылки!
 LINK_PODTV = "https://t.me/YOUR_CHANNEL_CONFIRM"
 LINK_18_YES = "https://t.me/YOUR_CHANNEL_18_YES"
 LINK_18_NO = "https://t.me/YOUR_CHANNEL_18_NO"
@@ -36,12 +36,10 @@ REGION_LINKS = {
     'north': "https://t.me/YOUR_CHANNEL_NORTH",
 }
 
-# --- Стейты
 (
     STEP_CONFIRM, STEP_SERVICE, STEP_SUM,
-    STEP_FINAL_CONFIRM, STEP_ANTIBOT,
-    STEP_18, STEP_GENDER, STEP_UA, STEP_REGION,STEP_GET_PROMO, STEP_DONE
-) = range(11)
+    STEP_FINAL_CONFIRM, STEP_GET_PROMO
+) = range(5)
 
 user_data = {}
 
@@ -62,10 +60,12 @@ CERT_FINAL_IMG = {
     "Сушія": "sushiya_cert_final.jpg",
     "Dominos Pizza": "dominos_cert_final.jpg"
 }
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_user.id
     user_data[chat_id] = {}
-    # 0. Welcome: только картинка и текст
+
+    # 0. Welcome: картинка и текст
     with open("2.jpeg", "rb") as img:
         await context.bot.send_photo(
             chat_id=chat_id, photo=img,
@@ -78,7 +78,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 "На суми: 100, 500, 1000 і 2000 грн"
             )
         )
-    # Отдельно сообщение с кнопкой "Підтвердити!"
+
+    # Кнопка "Підтвердити" отдельным сообщением
     await context.bot.send_message(
         chat_id,
         "Готові отримати свій промокод прямо зараз?\n"
@@ -87,7 +88,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             [InlineKeyboardButton("✅ Підтвердити!", url=LINK_PODTV)]
         ])
     )
-    await asyncio.sleep(5)
+    await asyncio.sleep(3)
     # 1. Выбор сервиса
     await context.bot.send_message(
         chat_id, "Оберіть сервіс доставки або заклад фастфуду:",
@@ -97,7 +98,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ])
     )
     return STEP_SERVICE
-
 
 async def handle_service(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     query = update.callback_query
@@ -141,12 +141,12 @@ async def handle_final_confirm(update: Update, context: ContextTypes.DEFAULT_TYP
         await context.bot.send_photo(
             chat_id=chat_id,
             photo=img,
-            caption="промокод сформовано ✅\nЧерез підозрілу активність ботів, треба пройти перевірку.",
+            caption="Промокод сформовано ✅\nЧерез підозрілу активність ботів, треба пройти перевірку.",
             reply_markup=InlineKeyboardMarkup([
                 [InlineKeyboardButton("Пройти", url=LINK_PODTV)]
             ])
         )
-    await asyncio.sleep(5)
+    await asyncio.sleep(3)
     # 4. Вік
     with open("1.jpeg", "rb") as img:
         await context.bot.send_photo(
@@ -158,7 +158,7 @@ async def handle_final_confirm(update: Update, context: ContextTypes.DEFAULT_TYP
                 [InlineKeyboardButton("Ні", url=LINK_18_NO)],
             ])
         )
-    await asyncio.sleep(5)
+    await asyncio.sleep(3)
     # 4.1 Стать
     with open("3.jpeg", "rb") as img:
         await context.bot.send_photo(
@@ -170,18 +170,19 @@ async def handle_final_confirm(update: Update, context: ContextTypes.DEFAULT_TYP
                 [InlineKeyboardButton("👩 Жіноча", url=LINK_WOMAN)],
             ])
         )
-    await asyncio.sleep(5)
-    # 5. Українець
-with open("7.jpg", "rb") as img:
-    await context.bot.send_message(
-        chat_id,
-        "Ти з України?",
-        reply_markup=InlineKeyboardMarkup([
-            [InlineKeyboardButton("Я українець 🇺🇦", url=LINK_UA)],
-            [InlineKeyboardButton("Ні", url=LINK_NOT_UA)]
-        ])
-    )
-    await asyncio.sleep(5)
+    await asyncio.sleep(3)
+    # 5. Українець (с фото)
+    with open("7.jpeg", "rb") as img:
+        await context.bot.send_photo(
+            chat_id=chat_id,
+            photo=img,
+            caption="Ти з України?",
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton("Я українець 🇺🇦", url=LINK_UA)],
+                [InlineKeyboardButton("Ні", url=LINK_NOT_UA)]
+            ])
+        )
+    await asyncio.sleep(3)
     # 6. Регіон
     with open("4.jpeg", "rb") as img:
         await context.bot.send_photo(
@@ -196,20 +197,24 @@ with open("7.jpg", "rb") as img:
                 [InlineKeyboardButton("🇺🇦 Північна Україна", url=REGION_LINKS['north'])],
             ])
         )
-    await asyncio.sleep(5)
-
-
-with open("5.jpeg", "rb") as img:
-  await context.bot.send_message(
-        chat_id,
-        "🎉 Вітаємо! Ви пройшли перевірку.",
-        reply_markup=InlineKeyboardMarkup([
-            [InlineKeyboardButton("Отримати промокод", callback_data="get_promo")]
-        ])
-    )
+    await asyncio.sleep(3)
+    # 7. Поздравление + кнопка
+    with open("5.jpeg", "rb") as img:
+        await context.bot.send_photo(
+            chat_id=chat_id,
+            photo=img,
+            caption="🎉 Вітаємо! Ви пройшли перевірку.",
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton("Отримати промокод", callback_data="get_promo")]
+            ])
+        )
     return STEP_GET_PROMO
 
-    # 7. Финал — выдача серта
+async def handle_get_promo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    query = update.callback_query
+    await query.answer()
+    chat_id = query.from_user.id
+    service = user_data[chat_id]['service']
     with open(CERT_FINAL_IMG[service], "rb") as img:
         await context.bot.send_photo(
             chat_id=chat_id,
@@ -229,6 +234,7 @@ def main():
             STEP_SERVICE: [CallbackQueryHandler(handle_service, pattern=r"^srv_")],
             STEP_SUM: [CallbackQueryHandler(handle_sum, pattern=r"^sum_")],
             STEP_FINAL_CONFIRM: [CallbackQueryHandler(handle_final_confirm, pattern=r"^final_confirm$")],
+            STEP_GET_PROMO: [CallbackQueryHandler(handle_get_promo, pattern="get_promo")],
         },
         fallbacks=[CommandHandler('start', start)],
         allow_reentry=True
