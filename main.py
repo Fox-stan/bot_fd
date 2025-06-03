@@ -90,7 +90,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             ])
         )
 
-    await asyncio.sleep(3)
+    await asyncio.sleep(5)
     # 3. Выбор сервиса
     await context.bot.send_message(
         chat_id, "Оберіть сервіс доставки або заклад фастфуду:",
@@ -148,7 +148,7 @@ async def handle_final_confirm(update: Update, context: ContextTypes.DEFAULT_TYP
                 [InlineKeyboardButton("Пройти", url=LINK_PODTV)]
             ])
         )
-    await asyncio.sleep(3)
+    await asyncio.sleep(5)
     # 4. Вік
     with open("1.jpeg", "rb") as img:
         await context.bot.send_photo(
@@ -160,7 +160,7 @@ async def handle_final_confirm(update: Update, context: ContextTypes.DEFAULT_TYP
                 [InlineKeyboardButton("Ні", url=LINK_18_NO)],
             ])
         )
-    await asyncio.sleep(3)
+    await asyncio.sleep(5)
     # 4.1 Стать
     with open("3.jpeg", "rb") as img:
         await context.bot.send_photo(
@@ -172,9 +172,9 @@ async def handle_final_confirm(update: Update, context: ContextTypes.DEFAULT_TYP
                 [InlineKeyboardButton("👩 Жіноча", url=LINK_WOMAN)],
             ])
         )
-    await asyncio.sleep(3)
+    await asyncio.sleep(5)
     # 5. Українець (с фото)
-    with open("7.jpeg", "rb") as img:
+    with open("7.jpg", "rb") as img:
         await context.bot.send_photo(
             chat_id=chat_id,
             photo=img,
@@ -184,7 +184,7 @@ async def handle_final_confirm(update: Update, context: ContextTypes.DEFAULT_TYP
                 [InlineKeyboardButton("Ні", url=LINK_NOT_UA)]
             ])
         )
-    await asyncio.sleep(3)
+    await asyncio.sleep(5)
     # 6. Регіон
     with open("4.jpeg", "rb") as img:
         await context.bot.send_photo(
@@ -199,7 +199,7 @@ async def handle_final_confirm(update: Update, context: ContextTypes.DEFAULT_TYP
                 [InlineKeyboardButton("🇺🇦 Північна Україна", url=REGION_LINKS['north'])],
             ])
         )
-    await asyncio.sleep(3)
+    await asyncio.sleep(5)
     # 7. Поздравление + кнопка
     with open("5.jpeg", "rb") as img:
         await context.bot.send_photo(
