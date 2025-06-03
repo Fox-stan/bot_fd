@@ -65,33 +65,33 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_user.id
     user_data[chat_id] = {}
 
-    # 0. Welcome: картинка и текст
-
-await context.bot.send_message(
+    # 1. Сообщение с приветствием (без картинки)
+    await context.bot.send_message(
         chat_id,
+        "🍔 Вітаємо в Glovo Промокоди 🍔!\n\n"
+        "⚠️ Увага!\n"
+        "Залишилось 113 із 12 000 промокодів\n\n"
+        "🔥 Зараз доступні промокоди на:\n"
+        "— Glovo\n— KFC\n— McDonald’s\n— Сушія\n— Dominos Pizza\n\n"
+        "На суми: 100, 500, 1000 і 2000 грн\n"
+    )
 
-                "🍔 Вітаємо в Glovo Промокоди 🍔!\n\n"
-                "⚠️ Увага!\n"
-                "Залишилось 113 із 12 000 промокодів\n\n"
-                "🔥 Зараз доступні промокоди на:\n"
-                "— Glovo\n— KFC\n— McDonald’s\n— Сушія\n— Dominos Pizza\n\n"
-                "На суми: 100, 500, 1000 і 2000 грн"
-            )
+    # 2. Фото + текст + кнопка
+    with open("2.jpeg", "rb") as img:
+        await context.bot.send_photo(
+            chat_id=chat_id,
+            photo=img,
+            caption=(
+                "Готові отримати свій промокод прямо зараз?\n"
+                "Спочатку підтвердіть, що ви не бот 🤖"
+            ),
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton("✅ Підтвердити!", url=LINK_PODTV)]
+            ])
         )
 
-    # Кнопка "Підтвердити" отдельным сообщением
-  with open("2.jpeg", "rb") as img:
-        await context.bot.send_photo(
-            chat_id=chat_id, photo=img,
-            caption=(
-        "Готові отримати свій промокод прямо зараз?\n"
-        "Спочатку підтвердіть, що ви не бот 🤖",
-        reply_markup=InlineKeyboardMarkup([
-            [InlineKeyboardButton("✅ Підтвердити!", url=LINK_PODTV)]
-        ])
-    )
     await asyncio.sleep(3)
-    # 1. Выбор сервиса
+    # 3. Выбор сервиса
     await context.bot.send_message(
         chat_id, "Оберіть сервіс доставки або заклад фастфуду:",
         reply_markup=InlineKeyboardMarkup([
