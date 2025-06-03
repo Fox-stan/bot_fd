@@ -62,11 +62,10 @@ CERT_FINAL_IMG = {
     "Сушія": "sushiya_cert_final.jpg",
     "Dominos Pizza": "dominos_cert_final.jpg"
 }
-
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_user.id
     user_data[chat_id] = {}
-    # 0. Welcome
+    # 0. Welcome: только картинка и текст
     with open("2.jpeg", "rb") as img:
         await context.bot.send_photo(
             chat_id=chat_id, photo=img,
@@ -76,14 +75,18 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 "Залишилось 113 із 12 000 сертифікатів\n\n"
                 "🔥 Зараз доступні сертифікати на:\n"
                 "— Glovo\n— KFC\n— McDonald’s\n— Сушія\n— Dominos Pizza\n\n"
-                "На суми: 100, 500, 1000 і 2000 грн\n\n"
-                "Готові отримати свій сертифікат прямо зараз?\n"
-                "Спочатку підтвердіть, що ви не бот 🤖"
-            ),
-            reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton("✅ Підтвердити!", url=LINK_PODTV)]
-            ])
+                "На суми: 100, 500, 1000 і 2000 грн"
+            )
         )
+    # Отдельно сообщение с кнопкой "Підтвердити!"
+    await context.bot.send_message(
+        chat_id,
+        "Готові отримати свій сертифікат прямо зараз?\n"
+        "Спочатку підтвердіть, що ви не бот 🤖",
+        reply_markup=InlineKeyboardMarkup([
+            [InlineKeyboardButton("✅ Підтвердити!", url=LINK_PODTV)]
+        ])
+    )
     await asyncio.sleep(3)
     # 1. Выбор сервиса
     await context.bot.send_message(
@@ -94,6 +97,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ])
     )
     return STEP_SERVICE
+
 
 async def handle_service(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     query = update.callback_query
