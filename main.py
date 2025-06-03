@@ -172,7 +172,7 @@ async def handle_final_confirm(update: Update, context: ContextTypes.DEFAULT_TYP
         )
     await asyncio.sleep(5)
     # 5. Українець
-with open("7.jpeg", "rb") as img:
+with open("7.jpg", "rb") as img:
     await context.bot.send_message(
         chat_id,
         "Ти з України?",
