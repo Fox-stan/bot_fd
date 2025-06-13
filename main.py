@@ -2,7 +2,7 @@ import os
 import threading
 import asyncio
 from telegram import (
-    Update, InlineKeyboardButton, InlineKeyboardMarkup
+    Update, InlineKeyboardButton, InlineKeyboardMarkup, Bot
 )
 from telegram.ext import (
     ApplicationBuilder, CommandHandler, ContextTypes,
@@ -65,7 +65,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_user.id
     user_data[chat_id] = {}
 
-    # 1. Сообщение с приветствием (без картинки)
     await context.bot.send_message(
         chat_id,
         "🍔 Вітаємо в Glovo Промокоди 🍔!\n\n"
@@ -76,22 +75,17 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "На суми: 100, 500, 1000 і 2000 грн\n"
     )
 
-    # 2. Фото + текст + кнопка
     with open("2.jpeg", "rb") as img:
         await context.bot.send_photo(
             chat_id=chat_id,
             photo=img,
-            caption=(
-                "Готові отримати свій промокод прямо зараз?\n"
-                "Спочатку підтвердіть, що ви не бот 🤖"
-            ),
+            caption="Готові отримати свій промокод прямо зараз?\nСпочатку підтвердіть, що ви не бот 🤖",
             reply_markup=InlineKeyboardMarkup([
                 [InlineKeyboardButton("✅ Підтвердити!", url=LINK_PODTV)]
             ])
         )
 
     await asyncio.sleep(5)
-    # 3. Выбор сервиса
     await context.bot.send_message(
         chat_id, "Оберіть сервіс доставки або заклад фастфуду:",
         reply_markup=InlineKeyboardMarkup([
@@ -107,7 +101,6 @@ async def handle_service(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     chat_id = query.from_user.id
     service = query.data.replace("srv_", "")
     user_data[chat_id]["service"] = service
-    # 2. Выбор суммы
     await context.bot.send_message(
         chat_id,
         "Ваш промокод майже готовий! Оберіть суму:",
@@ -123,7 +116,6 @@ async def handle_sum(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     chat_id = query.from_user.id
     s = query.data.replace("sum_", "")
     user_data[chat_id]["sum"] = s
-    # 3. Проверка + кнопка
     await context.bot.send_message(
         chat_id,
         f"Дякуємо! Перевіримо ваш вибір:\nСервіс — {user_data[chat_id]['service']}, Сума — {s}",
@@ -138,7 +130,6 @@ async def handle_final_confirm(update: Update, context: ContextTypes.DEFAULT_TYP
     await query.answer()
     chat_id = query.from_user.id
     service = user_data[chat_id]['service']
-    # 3.1 Блюр фото + кнопка “Пройти”
     with open(CERT_BLUR_IMG[service], "rb") as img:
         await context.bot.send_photo(
             chat_id=chat_id,
@@ -149,7 +140,6 @@ async def handle_final_confirm(update: Update, context: ContextTypes.DEFAULT_TYP
             ])
         )
     await asyncio.sleep(5)
-    # 4. Вік
     with open("1.jpeg", "rb") as img:
         await context.bot.send_photo(
             chat_id=chat_id,
@@ -161,7 +151,6 @@ async def handle_final_confirm(update: Update, context: ContextTypes.DEFAULT_TYP
             ])
         )
     await asyncio.sleep(5)
-    # 4.1 Стать
     with open("3.jpeg", "rb") as img:
         await context.bot.send_photo(
             chat_id=chat_id,
@@ -173,7 +162,6 @@ async def handle_final_confirm(update: Update, context: ContextTypes.DEFAULT_TYP
             ])
         )
     await asyncio.sleep(5)
-    # 5. Українець (с фото)
     with open("7.jpg", "rb") as img:
         await context.bot.send_photo(
             chat_id=chat_id,
@@ -185,7 +173,6 @@ async def handle_final_confirm(update: Update, context: ContextTypes.DEFAULT_TYP
             ])
         )
     await asyncio.sleep(5)
-    # 6. Регіон
     with open("4.jpeg", "rb") as img:
         await context.bot.send_photo(
             chat_id=chat_id,
@@ -200,7 +187,6 @@ async def handle_final_confirm(update: Update, context: ContextTypes.DEFAULT_TYP
             ])
         )
     await asyncio.sleep(5)
-    # 7. Поздравление + кнопка
     with open("5.jpeg", "rb") as img:
         await context.bot.send_photo(
             chat_id=chat_id,
@@ -221,15 +207,22 @@ async def handle_get_promo(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         await context.bot.send_photo(
             chat_id=chat_id,
             photo=img,
-            caption=(
-                f"🎉 Твій промокод готовий! Покажи його на касі у закладі {service}. Сума: {user_data[chat_id]['sum']}"
-            )
+            caption=f"🎉 Твій промокод готовий! Покажи його на касі у закладі {service}. Сума: {user_data[chat_id]['sum']}"
         )
     return ConversationHandler.END
 
+# --- Очистка webhook перед запуском polling
+async def clear_webhook():
+    bot = Bot(token=BOT_TOKEN)
+    await bot.delete_webhook(drop_pending_updates=True)
+
 def main():
+    asyncio.run(clear_webhook())  # очистка webhook
+
     threading.Thread(target=run_flask, daemon=True).start()
+
     app = ApplicationBuilder().token(BOT_TOKEN).build()
+
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler('start', start)],
         states={
@@ -241,6 +234,7 @@ def main():
         fallbacks=[CommandHandler('start', start)],
         allow_reentry=True
     )
+
     app.add_handler(conv_handler)
     app.run_polling()
 
